@@ -4,62 +4,49 @@ namespace Modules\Papel\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Modules\Papel\Models\Papel;
+use Modules\Papel\Models\PapelPermissao;
+use Modules\Papel\Http\Resources\PapelCollection;
+use Modules\Papel\Http\Resources\PapelResource;
+use Modules\Papel\Http\Requests\PapelRequest;
 
 class PapelController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
+    public function index(){
+        return new PapelCollection(Papel::all());
     }
+    public function store(PapelRequest $request){
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $campos = $request->validated();
+       $papel=Papel::create([
+            "nome"=>$campos['nome'],
+            "descricao"=>$campos['descricao']
+        ]);
+        $permissoes = $campos['permissoes'];
+        $papelPermissao=[];
+
+        foreach($campos['permissoes'] as $permissao){
+            
+        $papelPermissao[]=PapelPermissao::create([
+            "papel_id"=>$papel->id,
+            "permissao_id"=>$permissao
+        ]);
+            
+        }
+        return new PapelResource($papel);
+
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function update(){
+        //return new PapelResource($Papel);
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Papel $papel)
-    {
-        //
+    public function show(int $id){
+        //return Papel::where('id',$id)->first();
+        return new PapelResource(Papel::where('id',$id)->first());
     }
+    public function destroy(Papel $papel){
+        return Papel::where('id',$papel->id)->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Papel $papel)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Papel $papel)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Papel $papel)
-    {
-        //
     }
 }

@@ -3,6 +3,10 @@
 namespace Modules\Papel\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Modules\Papel\Http\Requests\PermissaoRequest;
+use Modules\Papel\Http\Requests\StorePermissaoRequest;
+use Modules\Papel\Http\Resources\PermissaoCollection;
+use Modules\Papel\Http\Resources\PermissaoResource;
 use Modules\Papel\Models\Permissao;
 
 class PermissaoController
@@ -12,7 +16,7 @@ class PermissaoController
      */
     public function index()
     {
-        //
+        return new PermissaoCollection(Permissao::all());
     }
 
     /**
@@ -26,17 +30,23 @@ class PermissaoController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePermissaoRequest $request)
     {
         //
+        $campos = $request->validated();
+
+        return Permissao::create($campos);
+
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Permissao $permissao)
+    public function show($permissao)
     {
         //
+        return new PermissaoCollection(Permissao::where('id',$permissao)->first());
     }
 
     /**
@@ -45,21 +55,30 @@ class PermissaoController
     public function edit(Permissao $permissao)
     {
         //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Permissao $permissao)
+    public function update(PermissaoRequest $request, $id)
     {
         //
+
+        $permissao=Permissao::where('id',$id)->get();
+        $permissao;
+        
+        return new PermissaoResource($permissao->get());
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Permissao $permissao)
+    public function destroy($id)
     {
         //
+        $permissao=Permissao::find($id);
+        return $permissao->truncate();
+        
     }
 }

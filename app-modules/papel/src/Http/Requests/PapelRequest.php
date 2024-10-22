@@ -4,7 +4,7 @@ namespace Modules\Papel\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PapelPermissaoRequest extends FormRequest
+class PapelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,22 +22,11 @@ class PapelPermissaoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
-            'papel_id'=>['required'],
-            'permissoes'=>['required']
+            'nome'=>['required','unique:papeis'],
+            'descricao'=>['sometimes'],
+            'permissoes'=>['sometimes']
             
         ];
-
+        
     }
-
-    protected function prepareForValidation()
-    {
-            
-        $this->merge([
-         
-            'papel_id'=> $this->papelId,
-            
-            
-            ]);
-        }
 }

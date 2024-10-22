@@ -4,21 +4,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Modules\Auth\Http\Controllers\AuthController;
 use Modules\Auth\Http\Controllers\UserController;
+use Modules\Docente\Http\Controllers\DocenteController;
 use Modules\Docente\Http\Controllers\NotaController;
 use Modules\Docente\Http\Controllers\TurmaController;
 use Modules\Matricula\Models\Cadeira;
 use Modules\Matriculas\Http\Controllers\CursoController;
+use Modules\Matriculas\Http\Controllers\EstudanteController;
 use Modules\Matriculas\Http\Resources\CadeiraResource;
+use Modules\Papel\Http\Controllers\PermissaoController;
+use Modules\Papel\Http\Controllers\PapelController;
+use Modules\Papel\Http\Controllers\PapelPermissaoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 Route::prefix('auth')->group(function(){
     Route::apiResource('auth', AuthController::class)->names('auth');
-    Route::post('login',[AuthController::class, 'login']);
+    Route::post('/login',[AuthController::class, 'login']);
     Route::post('/logout',[AuthController::class, 'logout'])->middleware('auth:api');
 
-    Route::resource('users',UserController::class)->middleware('auth:api');//middleware('auth:api');//->middleware('auth:sanctum');
+    Route::resource('/users',UserController::class)->middleware('auth:api');//middleware('auth:api');//->middleware('auth:sanctum');
 
     //Route::post('me',AuthController::class,'me')->middleware('auth:api');
 });
