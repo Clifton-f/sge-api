@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\Auth\Http\Controllers\AuthController;
+use Modules\Auth\Http\Controllers\UserController;
+use Modules\Docente\Http\Controllers\NotaController;
+use Modules\Docente\Http\Controllers\TurmaController;
+use Modules\Matricula\Models\Cadeira;
+use Modules\Matriculas\Http\Controllers\CursoController;
+use Modules\Matriculas\Http\Resources\CadeiraResource;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+Route::prefix('auth')->group(function(){
+    Route::apiResource('auth', AuthController::class)->names('auth');
+    Route::post('login',[AuthController::class, 'login']);
+    Route::post('/logout',[AuthController::class, 'logout'])->middleware('auth:api');
+
+    Route::resource('users',UserController::class)->middleware('auth:api');//middleware('auth:api');//->middleware('auth:sanctum');
+
+    //Route::post('me',AuthController::class,'me')->middleware('auth:api');
+});
+
+Route::prefix('papel')->group(function(){
+    Route::post('login',[AuthController::class, 'login']);
+    Route ::apiResource('/papeis', PapelController::class)->middleware('auth:api');
+    Route::apiResource('/permissões',PermissaoController::class)->middleware('auth:api');
+    Route::post('/addpermissoes',[PapelPermissaoController::class,'store']);
+
+});
+
+Route::prefix('docente')->group(function(){
+    Route::apiResource('/docente', DocenteController::class);
+    Route::apiResource('/turma', TurmaController::class);
+    Route::get("/notaEstudante", [NotaController::class, 'show']);
+    Route::get("/notasTurma", [NotaController::class, 'index']);
+    //Route::get("/nota/{ano}/{cadeira_id}/{curso_id}/{nome_avaliacao}/{estudante_id}", [NotaController::class, 'show']);
+});
+
+Route::prefix('matricula')->group(function(){
+    Route::apiResource('curso',CursoController::class);
+    Route::get('cadeira',function(){
+        return new CadeiraResource(Cadeira::where('id',21)->first());
+    });
+    Route::apiResource('/estudante',EstudanteController::class);
+});
